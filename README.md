@@ -1,27 +1,28 @@
-# Algoritmos Genéticos para la Optimización en Ordenación de Trenes
+# Genetic Algorithms for Train Scheduling Optimization
 
-## Descripción del Proyecto
-Este proyecto implementa un **algoritmo genético** para optimizar el tiempo de espera de los trenes en un área ferroviaria, minimizando los retrasos en la descarga. Los trenes deben seguir ciertas restricciones:
-- Todos circulan por la misma vía, por lo que deben esperar si hay otro delante.
-- Solo pueden entrar a un muelle de carga de su mismo tipo.
-- El tiempo de descarga de un tren depende del número de vagones que lleva.
+## Project Overview
+This project implements a **genetic algorithm** to optimize train waiting times in a railway system, minimizing unloading delays. Trains must follow specific constraints:
+- All trains share a single track, meaning they must wait if another train is ahead.
+- Trains can only enter a loading dock that matches their designated type.
+- The unloading time depends on the number of wagons a train carries.
 
-El objetivo es encontrar un **orden óptimo de llegada de los trenes** que minimice el tiempo total de espera.
+The goal is to find the **optimal train arrival order** that minimizes total waiting time.
 
 ---
-## Implementación
 
-### **1. Generación de Datos**
-Se generan trenes aleatorios con:
-- Un número de vagones entre **10 y 30**.
-- Un tipo de muelle de carga (**op1, op2, op3**).
+## Implementation
+
+### **1. Data Generation**
+Random trains are generated with:
+- A number of wagons between **10 and 30**.
+- A specific loading dock type (**op1, op2, op3**).
 
 ```python
-incoming_trains = random_trains_generation(10)  # 10 trenes entrantes
+incoming_trains = random_trains_generation(10)  # 10 incoming trains
 ```
 
-### **2. Representación de Individuos**
-Cada individuo en la población representa una posible ordenación de los trenes.
+### **2. Individual Representation**
+Each individual in the population represents a possible train ordering.
 
 ```python
 class Train:
@@ -30,29 +31,31 @@ class Train:
         self.op = op
 ```
 
-### **3. Evaluación (Función de Fitness)**
-La función de evaluación calcula el **tiempo total de espera** según el orden de los trenes.
+### **3. Evaluation (Fitness Function)**
+The evaluation function calculates the **total waiting time** based on the train order.
 
 ```python
 def evaluation(individual):
     time = 0
-    # Lógica para calcular el tiempo de espera acumulado
+    # Logic to calculate accumulated waiting time
     return time,
 ```
 
-### **4. Operaciones Genéticas**
+### **4. Genetic Operations**
 
-#### **Cruce**
-Intercambia partes de la secuencia de trenes entre dos individuos, asegurando que no haya duplicados.
+#### **Crossover**
+Swaps segments of the train sequence between two individuals while ensuring no duplicates.
+
 ```python
 def our_crossover(ind1, ind2):
-    mitad1, mitad2 = ind1[:len(ind1)//2], ind1[len(ind1)//2:]
-    mitad3, mitad4 = ind2[:len(ind2)//2], ind2[len(ind2)//2:]
-    return mitad1 + mitad4, mitad3 + mitad2
+    half1, half2 = ind1[:len(ind1)//2], ind1[len(ind1)//2:]
+    half3, half4 = ind2[:len(ind2)//2], ind2[len(ind2)//2:]
+    return half1 + half4, half3 + half2
 ```
 
-#### **Mutación**
-Intercambia dos trenes aleatoriamente para generar diversidad.
+#### **Mutation**
+Randomly swaps two trains to introduce diversity.
+
 ```python
 def our_mutation(ind):
     i, j = random.sample(range(len(ind)), 2)
@@ -60,42 +63,42 @@ def our_mutation(ind):
     return ind,
 ```
 
-### **5. Ejecución del Algoritmo Genético**
-Se utiliza la librería **DEAP** para ejecutar el algoritmo con:
-- **Selección por torneo** (evita perder individuos potencialmente útiles).
-- **Cruce y mutación personalizados**.
-- **200 generaciones**.
+### **5. Running the Genetic Algorithm**
+The **DEAP** library is used to execute the algorithm with:
+- **Tournament selection** (to preserve potentially strong individuals).
+- **Custom crossover and mutation operators**.
+- **200 generations**.
 
 ```python
 pop, logbook = algorithms.eaSimple(pop, toolbox, cxpb=0.5, mutpb=0.15, ngen=200, stats=stats, halloffame=hallOfFame, verbose=True)
 ```
 
-### **6. Resultados**
-El algoritmo reduce significativamente el tiempo de espera de los trenes, optimizando su orden de llegada.
+### **6. Results**
+The algorithm significantly reduces train waiting times by optimizing their arrival order.
 
 ```python
-print("Mejor orden de trenes:")
+print("Best train sequence:")
 for i, train in enumerate(hallOfFame[0]):
-    print(f"Tren {i}: {train}")
+    print(f"Train {i}: {train}")
 ```
 
-Se grafica la evolución del tiempo de espera a lo largo de las generaciones:
+The evolution of waiting times over generations is visualized:
 
 ```python
-plt.plot(gen, min_, label="Mejor tiempo")
-plt.plot(gen, avg, label="Tiempo medio")
-plt.title("Optimización de Tiempos con Algoritmos Genéticos")
-plt.xlabel("Generación")
-plt.ylabel("Tiempo de espera")
+plt.plot(gen, min_, label="Best time")
+plt.plot(gen, avg, label="Average time")
+plt.title("Time Optimization with Genetic Algorithms")
+plt.xlabel("Generation")
+plt.ylabel("Waiting Time")
 plt.legend()
 plt.show()
 ```
 
 ---
-## **Conclusiones**
-- Se logró reducir el tiempo de espera de los trenes en **casi un 50%**.
-- El algoritmo genético encontró un ordenamiento óptimo en un **número reducido de generaciones**.
-- La combinación de **cruce ordenado y mutación por intercambio** dio buenos resultados.
 
-Este enfoque podría aplicarse a otros problemas de **optimización en logística y transporte**.
+## **Conclusions**
+- The train waiting time was reduced by **almost 50%**.
+- The genetic algorithm found an optimal sequence within a **small number of generations**.
+- The combination of **ordered crossover and swap mutation** yielded effective results.
 
+This approach could be applied to other **logistics and transportation optimization problems**.
